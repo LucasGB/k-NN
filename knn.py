@@ -140,7 +140,19 @@ def buildConfusionMatrix(classified, trainning_labels, test_labels):
 	distinctLabels = [x for x in trainning_labels if x not in used and (used.add(x) or True)]
 	confusionMatrix = confusion_matrix(test_labels, classified)
 	print 'Linhas -> classes\nColunas -> classificadas'
-	print confusionMatrix
+	return confusionMatrix
+
+def printStat(confusionMatrix):
+	c = 0
+	correct = 0
+	for i in range(len(confusionMatrix)):		
+		for j in range(len(confusionMatrix[0])):
+			if i == j:
+				correct += confusionMatrix[i][j]
+			c += 1
+
+	print('Taxa de acerto: '+str((float(correct)/(correct+c))*100)+'%%' )
+
 
 if __name__ == '__main__':
 	startTime = datetime.now()
@@ -162,8 +174,9 @@ if __name__ == '__main__':
 
 		classified = classify(k_closest_classes)		
 
-		buildConfusionMatrix(classified, trainning_labels, test_labels)
-
+		confusionMatrix = buildConfusionMatrix(classified, trainning_labels, test_labels)
+		print confusionMatrix
+		printStat(confusionMatrix)
 
 	elif(len(argv) == 6 and argv[4] == 'euclidean' and argv[5] == 'zscore'):
 		separateFiles(argv[1], argv[2])
@@ -181,8 +194,9 @@ if __name__ == '__main__':
 		k_closest_classes = get_k_closests(distance_list, int(argv[3]))
 
 		classified = classify(k_closest_classes)		
-
-		buildConfusionMatrix(classified, trainning_labels, test_labels)
+		confusionMatrix = buildConfusionMatrix(classified, trainning_labels, test_labels)
+		print confusionMatrix
+		printStat(confusionMatrix)
 
 	elif(len(argv) == 6 and argv[4] == 'manhattan' and argv[5] == 'minmax'):
 		separateFiles(argv[1], argv[2])
@@ -201,8 +215,9 @@ if __name__ == '__main__':
 
 		classified = classify(k_closest_classes)		
 
-		buildConfusionMatrix(classified, trainning_labels, test_labels)
-
+		confusionMatrix = buildConfusionMatrix(classified, trainning_labels, test_labels)
+		print confusionMatrix
+		printStat(confusionMatrix)
 
 	elif(len(argv) == 6 and argv[4] == 'manhattan' and argv[5] == 'zscore'):
 		separateFiles(argv[1], argv[2])
@@ -221,6 +236,10 @@ if __name__ == '__main__':
 
 		classified = classify(k_closest_classes)		
 
-		buildConfusionMatrix(classified, trainning_labels, test_labels)
+		confusionMatrix = buildConfusionMatrix(classified, trainning_labels, test_labels)
+		print confusionMatrix
+		printStat(confusionMatrix)
 
+	else:
+		print 'Erro ao executar o script. Verifique os parametros entrados.'
 	print datetime.now() - startTime,'segundos'
