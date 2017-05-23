@@ -7,30 +7,6 @@ from sklearn.metrics import confusion_matrix
 from scipy import stats
 from scipy import spatial
 
-def extract1(trainningFile):
-	with open(trainningFile) as file:
-		
-		# Loads matrix from file
-		trainning_characteristics = np.loadtxt(file)
-
-		n_rows = len(trainning_characteristics)
-		n_columns = len(trainning_characteristics[0])
-
-		# Retrieves a list containing all the class numbers from file
-		classes = []
-		for i in range(n_rows):
-			classes.append(trainning_characteristics[i][n_columns-1])
-
-		used = set()
-		# Creates a distinct label list
-		distinctClasses = [x for x in classes if x not in used and (used.add(x) or True)]
-		# Returns a list containing the sum for each distinct label occourrences
-		# Gets the occurence of each class inside de file
-		occurence = [classes.count(distinctClasses[x]) for x in range(len(distinctClasses))]
-
-		print(occurence)
-
-
 def separateFiles(trainningFile, testFile):
 	with open(trainningFile, 'r') as file:
 		data = np.loadtxt(file)
@@ -86,9 +62,6 @@ def manhattanDistance(trainning_characteristics, trainning_labels, testFile):
 
 	# Calculates the distance of the unknown instance for every neighbour
 	for instance in test_characteristics:
-		#distance_list.append([np.linalg.norm(np.array(instance)-i) for i in trainning_characteristics])
-		#ditsance_list.append(   [    [sum(abs(instance[j]-characteristics[j])) for characteristics in trainning_characteristics]]   )
-		#distance_list.append(sum(abs(instance-i) for instance, i in zip(test_characteristics, trainning_characteristics)))
 		distance_list.append([spatial.distance.cityblock(instance, i) for i in trainning_characteristics])
 
 	print len(distance_list)
