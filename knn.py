@@ -5,6 +5,7 @@ import numpy as np
 from itertools import groupby
 from sklearn.metrics import confusion_matrix
 from scipy import stats
+from scipy import spatial
 
 def extract1(trainningFile):
 	with open(trainningFile) as file:
@@ -58,7 +59,7 @@ def extract(fileName):
 		data = np.loadtxt(file)
 	return data
 
-def calculateDistance(trainning_characteristics, trainning_labels, testFile):
+def euclideanDistance(trainning_characteristics, trainning_labels, testFile):
 
 	testLabelsFile = testFile+'_labels.txt'
 	testCharacteristicsFile = testFile+'_characteristics.txt'
@@ -86,7 +87,9 @@ def manhattanDistance(trainning_characteristics, trainning_labels, testFile):
 	# Calculates the distance of the unknown instance for every neighbour
 	for instance in test_characteristics:
 		#distance_list.append([np.linalg.norm(np.array(instance)-i) for i in trainning_characteristics])
-		distance_list.append(sum(abs(instance-i) for instance, i in zip(test_characteristics, trainning_characteristics)))
+		#ditsance_list.append(   [    [sum(abs(instance[j]-characteristics[j])) for characteristics in trainning_characteristics]]   )
+		#distance_list.append(sum(abs(instance-i) for instance, i in zip(test_characteristics, trainning_characteristics)))
+		distance_list.append([spatial.distance.cityblock(instance, i) for i in trainning_characteristics])
 
 	print len(distance_list)
 	print len(distance_list[0])
@@ -153,7 +156,7 @@ if __name__ == '__main__':
 
 		normalized_characteristics = normalizeMinMax(trainning_characteristics)
 
-		test_labels, distance_list = calculateDistance(normalized_characteristics, trainning_labels, argv[2])
+		test_labels, distance_list = euclideanDistance(normalized_characteristics, trainning_labels, argv[2])
 
 		k_closest_classes = get_k_closests(distance_list, int(argv[3]))
 
@@ -173,7 +176,7 @@ if __name__ == '__main__':
 
 		normalized_characteristics = normalize_z_score(trainning_characteristics)
 
-		test_labels, distance_list = calculateDistance(normalized_characteristics, trainning_labels, argv[2])
+		test_labels, distance_list = euclideanDistance(normalized_characteristics, trainning_labels, argv[2])
 
 		k_closest_classes = get_k_closests(distance_list, int(argv[3]))
 
@@ -220,7 +223,4 @@ if __name__ == '__main__':
 
 		buildConfusionMatrix(classified, trainning_labels, test_labels)
 
-	
 	print datetime.now() - startTime,'segundos'
-#	elif(len(argv) == 4 and argv[1] == 'centroid'):
-#		extract1(argv[2])
